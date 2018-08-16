@@ -1,0 +1,1 @@
+window.Synth = require('./synth/synthesizer.js')
