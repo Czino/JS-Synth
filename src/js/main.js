@@ -1,3 +1,10 @@
 const synth = new Synth()
+if (document.attachEvent) {
+    document.attachEvent('onkeydown', play)
+} else {
+    document.addEventListener('keydown', play)
+}
 
-synth.play()
+function play() {
+    synth.play()
+}
