@@ -1,10 +1,4 @@
 const synth = new Synth()
-if (document.attachEvent) {
-    document.attachEvent('onkeydown', play)
-} else {
-    document.addEventListener('keydown', play)
-}
+const keyboard = new SynthKeyboard(synth)
 
-function play() {
-    synth.play()
-}
+keyboard.activate()
