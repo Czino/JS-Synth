@@ -16,8 +16,11 @@ const Keyboard = function (out) {
         'u': 79,
         'j': 80,
         'k': 81,
-        'l': 82
+        'o': 82,
+        'l': 83,
+        'p': 84
     }
+    this.activeKeys = {}
 }
 
 Keyboard.prototype.activate = function() {
@@ -45,19 +48,34 @@ Keyboard.prototype.connect = function(out) {
 }
 
 Keyboard.prototype.onKeyDown = function(e) {
-    if (this.keyMap.hasOwnProperty(e.key)) {
-        this.out.play(this._MIDIToFrequency(this.keyMap[e.key]))
-    }
     if (!isNaN(e.key)) {
         this.octave = parseInt(e.key)
     }
+    if (e.metaKey || e.shiftKey || !isNaN(e.key) ||this.activeKeys[e.key]) {
+        return
+    }
+
+    this.activeKeys[e.key] = true
+
+    Object.keys(this.activeKeys).forEach((key) => {
+        if (this.activeKeys[key] && this.keyMap.hasOwnProperty(key)) {
+            this.out.play(
+                this._MIDIToFrequency(this.keyMap[key]),
+                key
+            )
+        }
+    })
 }
 Keyboard.prototype.onKeyUp = function(e) {
-    this.out.stop()
+    if (e.metaKey || e.shiftKey || !isNaN(e.key) || !this.activeKeys[e.key]) {
+        return
+    }
+    this.out.stop(e.key)
+    this.activeKeys[e.key] = false
 }
 
 Keyboard.prototype._MIDIToFrequency = function(MIDINote) {
-    return Math.pow(2, (MIDINote - 69) / 12) * 440.0 * this.octave / 3
+    return Math.pow(2, (MIDINote - 69) / 12) * 440.0 * this.octave / 6
 }
 
 module.exports = Keyboard
