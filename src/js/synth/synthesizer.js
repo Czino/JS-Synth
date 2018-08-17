@@ -10,9 +10,16 @@ const Synth = function () {
     ]
 }
 
-Synth.prototype.play = function() {
+Synth.prototype.play = function(freq) {
     this.oscillators.forEach(oscillator => {
+        oscillator.setFrequency(freq)
         oscillator.activate()
+    })
+}
+
+Synth.prototype.stop = function() {
+    this.oscillators.forEach(oscillator => {
+        oscillator.deactivate()
     })
 }
 

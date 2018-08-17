@@ -9,11 +9,14 @@ const Oscillator = function (context, frequency, type) {
 
 Oscillator.prototype.activate = function() {
     this.oscillator.connect(this.context.destination)
-    setTimeout(() => {
-        if (this.oscillator.context) {
-            this.oscillator.disconnect(this.context.destination)
-        }
-    }, 100)
+}
+
+Oscillator.prototype.deactivate = function() {
+    this.oscillator.disconnect(this.context.destination)
+}
+
+Oscillator.prototype.setFrequency = function(freq) {
+    this.oscillator.frequency.setValueAtTime(freq, this.context.currentTime)
 }
 
 module.exports = Oscillator
