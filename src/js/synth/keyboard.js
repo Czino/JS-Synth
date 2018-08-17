@@ -47,6 +47,17 @@ Keyboard.prototype.connect = function(out) {
     this.out = out
 }
 
+Keyboard.prototype.pressKey = function(key) {
+    this.out.play(
+        this._MIDIToFrequency(this.keyMap[key]),
+        key
+    )
+}
+
+Keyboard.prototype.offKey = function(key) {
+    this.out.stop(key)
+}
+
 Keyboard.prototype.onKeyDown = function(e) {
     if (!isNaN(e.key)) {
         this.octave = parseInt(e.key)
@@ -59,10 +70,7 @@ Keyboard.prototype.onKeyDown = function(e) {
 
     Object.keys(this.activeKeys).forEach((key) => {
         if (this.activeKeys[key] && this.keyMap.hasOwnProperty(key)) {
-            this.out.play(
-                this._MIDIToFrequency(this.keyMap[key]),
-                key
-            )
+            this.pressKey(key)
         }
     })
 }
@@ -70,8 +78,8 @@ Keyboard.prototype.onKeyUp = function(e) {
     if (e.metaKey || e.shiftKey || !isNaN(e.key) || !this.activeKeys[e.key]) {
         return
     }
-    this.out.stop(e.key)
     this.activeKeys[e.key] = false
+    this.offKey(e.key)
 }
 
 Keyboard.prototype._MIDIToFrequency = function(MIDINote) {

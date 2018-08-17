@@ -18,7 +18,9 @@ Synth.prototype.play = function(freq, id) {
 }
 
 Synth.prototype.stop = function(id) {
-    console.log('stop', id)
+    if (!this.oscillators[id]) {
+        return
+    }
     this.oscillators[id].forEach(oscillator => {
         oscillator.deactivate()
     })
