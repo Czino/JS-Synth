@@ -5,7 +5,6 @@ const Oscillator = function (context, type, frequency, detune) {
         'frequency': frequency || 440,
         'detune': detune || 0
     })
-    console.log(this.oscillator)
     this.oscillator.start()
 }
 
