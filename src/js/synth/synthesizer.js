@@ -25,9 +25,20 @@ const Synth = function (polyphony) {
 }
 
 Synth.prototype.play = function(freq, id) {
-    let index = 0
+    let index = this.oscillatorGroups.findIndex(group => {
+        // check if group is already assigned to id
+        return group.key === id
+    })
+
+    // if no group is assigned, find free group
+    if (index === -1) {
+        index = this.oscillatorGroups.findIndex(group => {
+            return group.key === null
+        })
+    }
     let group = this.oscillatorGroups[index]
     group.active = true
+    group.key = id
     group.oscillators.forEach(oscillator => {
         oscillator.setFrequency(freq)
         oscillator.activate()
@@ -37,9 +48,15 @@ Synth.prototype.play = function(freq, id) {
 }
 
 Synth.prototype.stop = function(id) {
-    let index = 0
+    let index = this.oscillatorGroups.findIndex(group => {
+        return group.key === id
+    })
+    if (index === -1) {
+        return
+    }
     let group = this.oscillatorGroups[index]
     group.active = false
+    group.key = null
     group.envelope.stop()
     group.clear = setTimeout(() => {
         if (!group.active) {
@@ -53,6 +70,7 @@ Synth.prototype.stop = function(id) {
 Synth.prototype.createOscillatorGroup = function(type, freq) {
     let oscillatorGroup = {
         'active': false,
+        'key': null,
         'oscillators': [
             // new Oscillator(
             //     this.context,
