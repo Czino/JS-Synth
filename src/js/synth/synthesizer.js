@@ -6,19 +6,19 @@ const Envelope = require('./envelope')
 const Synth = function (polyphony) {
     this.context = new AudioContext()
     this.gain = 0.5
-    // @TODO consider refactoring envelope into own module
     this.envelope = {
         'attack': 100,
         'decay': 0,
         'sustain': .5,
-        'release': 3000
+        'release': 2000
     }
     this.masterGain = new Gain(this.context, this.gain)
     this.oscillatorGroups = []
+
     for (let i = 0; i < polyphony; i++) {
         this.oscillatorGroups.push(this.createOscillatorGroup())
     }
-    
+
     this.pan = 'TODO'
     this.masterGain.connect(this.context.destination)
     // this.pan.connect(this.masterGain.node)
@@ -39,10 +39,8 @@ Synth.prototype.play = function(freq, id) {
     let group = this.oscillatorGroups[index]
     group.active = true
     group.key = id
-    group.oscillators.forEach(oscillator => {
-        oscillator.setFrequency(freq)
-        oscillator.activate()
-    })
+    group.oscillator.setFrequency(freq)
+    group.oscillator.activate()
     group.envelope.start()
     clearTimeout(group.clear)
 }
@@ -60,9 +58,7 @@ Synth.prototype.stop = function(id) {
     group.envelope.stop()
     group.clear = setTimeout(() => {
         if (!group.active) {
-            group.oscillators.forEach(oscillator => {
-                oscillator.deactivate()
-            })
+            group.oscillator.deactivate()
         }
     }, this.envelope.release)
 }
@@ -71,32 +67,16 @@ Synth.prototype.createOscillatorGroup = function(type, freq) {
     let oscillatorGroup = {
         'active': false,
         'key': null,
-        'oscillators': [
-            // new Oscillator(
-            //     this.context,
-            //     type || 'sine',
-            //     freq || 440,
-            //     -3
-            // ),
-            new Oscillator(
-                this.context,
-                type || 'sine',
-                freq || 440,
-                0
-            ),
-            // new Oscillator(
-            //     this.context,
-            //     type || 'sine',
-            //     freq || 440,
-            //     3
-            // )
-        ],
+        'oscillator': new Oscillator(
+            this.context,
+            type || 'sine',
+            freq || 440,
+            0
+        ),
         'envelope': this.createEnvelopeGain()
     }
 
-    oscillatorGroup.oscillators.forEach(oscillator => {
-        oscillator.connect(oscillatorGroup.envelope)
-    })
+    oscillatorGroup.oscillator.connect(oscillatorGroup.envelope)
 
     return oscillatorGroup
 }

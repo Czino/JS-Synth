@@ -22,11 +22,6 @@ Envelope.prototype.start = function() {
     setTimeout(() => {
         this.node.gain.linearRampToValueAtTime(this.sustain, this.context.currentTime + this.attack)
     }, 50)
-
-    clearInterval(this.interval)
-    this.interval = setInterval(() => {
-        document.getElementById('debug').style.height = (this.node.gain.value * 100).toFixed() + '%'
-    }, 50)
 }
 
 Envelope.prototype.stop = function() {
