@@ -2,8 +2,55 @@
     <head>
         <script src="dist/js/synth.js" defer></script>
         <script src="dist/js/main.js" defer></script>
+        <style>
+            html, body {
+                margin: 0;
+            }
+            #synth {
+                width: 800px;
+                height: 500px;
+                background-color: #AAF;
+                position: relative;
+            }
+            .slider-vertical {
+                transform: rotate(-90deg)
+            }
+            #synth #master,
+            #synth #pan,
+            #synth #envelope {
+                position: absolute;
+            }
+            #master {
+                bottom: 60px;
+                left: -10px;
+                width: 100px;
+            }
+            #pan {
+                bottom: 30px;
+                left: 100px;
+                width: 50px;
+            }
+            #envelope {
+                right: 0;
+                bottom: 100px;
+            }
+            #envelope input {
+                width: 100px;
+            }
+        </style>
     </head>
     <body>
-        <h1>Synth JS</h1>
+        
+        <div id="synth">
+            <input type="range" id="master" class="slider-vertical" min="0" max="100">
+            <input type="range" id="pan" min="-100" max="100">
+            <input type="range" id="waveShape" min="0" max="4" value="0">
+            <div id="envelope">
+                <input type="range" id="attack" class="slider-vertical" min="0" max="100">
+                <input type="range" id="decay" class="slider-vertical" min="0" max="100">
+                <input type="range" id="sustain" class="slider-vertical" min="0" max="100">
+                <input type="range" id="release" class="slider-vertical" min="0" max="100">
+            </div>
+        </div>
     </body>
 </html>

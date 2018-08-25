@@ -8,6 +8,10 @@ const Oscillator = function (context, type, frequency, detune) {
     this.oscillator.start()
 }
 
+Oscillator.prototype.setType = function(type) {
+    this.oscillator.type = type
+}
+
 Oscillator.prototype.connect = function(out) {
     if (out.node) {
         this.out = out.node

@@ -11,4 +11,8 @@ Gain.prototype.connect = function(out) {
     }
 }
 
+Gain.prototype.setValue = function(value) {
+    this.node.gain.value = value
+}
+
 module.exports = Gain

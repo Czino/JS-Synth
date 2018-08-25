@@ -3,25 +3,53 @@ const Oscillator = require('./oscillator')
 const Gain = require('./gain')
 const Envelope = require('./envelope')
 
-const Synth = function (polyphony) {
+const Synth = function (settings) {
     this.context = new AudioContext()
-    this.gain = 0.5
+    this.gain = settings.gain || 0.5
     this.envelope = {
-        'attack': 100,
-        'decay': 0,
-        'sustain': .5,
-        'release': 2000
+        'attack': settings.attack || 100,
+        'decay': settings.decay || 300,
+        'sustain': settings.sustain || .5,
+        'release': settings.release || 2000
     }
+    this.waveShape = 'sine'
     this.masterGain = new Gain(this.context, this.gain)
     this.oscillatorGroups = []
 
-    for (let i = 0; i < polyphony; i++) {
+    for (let i = 0; i < settings.polyphony; i++) {
         this.oscillatorGroups.push(this.createOscillatorGroup())
     }
 
     this.pan = 'TODO'
     this.masterGain.connect(this.context.destination)
     // this.pan.connect(this.masterGain.node)
+}
+
+Synth.prototype.setMaster = function(value) {
+    this.masterGain.setValue(value)
+}
+
+Synth.prototype.setPan = function(value) {
+    // @TODO
+}
+
+Synth.prototype.setWaveShape = function(shape) {
+    this.waveShape = shape
+    this.oscillatorGroups.forEach(group => {
+        group.oscillator.setType(this.waveShape)
+    })
+}
+
+Synth.prototype.setEnvelope = function(settings) {
+    this.envelope = {
+        'attack': settings && settings.attack ? settings.attack : this.envelope.attack,
+        'decay': settings && settings.decay ? settings.decay : this.envelope.decay,
+        'sustain': settings && settings.sustain ? settings.sustain : this.envelope.sustain,
+        'release': settings && settings.release ? settings.release : this.envelope.release
+    }
+    this.oscillatorGroups.forEach(group => {
+        group.envelope.setValues(this.envelope)
+    })
 }
 
 Synth.prototype.play = function(freq, id) {
@@ -69,7 +97,7 @@ Synth.prototype.createOscillatorGroup = function(type, freq) {
         'key': null,
         'oscillator': new Oscillator(
             this.context,
-            type || 'sine',
+            type || this.waveShape,
             freq || 440,
             0
         ),
